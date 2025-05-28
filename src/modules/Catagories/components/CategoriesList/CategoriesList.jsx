@@ -8,6 +8,8 @@ import DeleteConfirmation from '../../../Shared/components/DeleteConfirmation/De
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import header from '../../../../assets/images/header.png'
+import { axiousInstance, CATEGORY_URLS } from '../../../../services/Urls';
+import Loader from '../../../Shared/components/Loader/Loader';
 
 export default function CategoriesList() {
   const {
@@ -16,7 +18,7 @@ export default function CategoriesList() {
     handleSubmit,
     setValue,
   } = useForm();
-
+  const [Load, setLoad] = useState(false);
   const [statusAdd, setStatusAdd] = useState(false);
   const [statusUpdate, setStatusUpdate] = useState(false);
   const [catId, setCatId] = useState(0);
@@ -71,10 +73,7 @@ export default function CategoriesList() {
     try {
       setIsLoading(true)
       let response = await axios.post(
-        'https://upskilling-egypt.com:3006/api/v1/Category/',
-        data,
-        { headers: { Authorization: localStorage.getItem('token') } }
-      );
+       `https://upskilling-egypt.com:3006/api/v1/Category/`,data ,{ headers: { Authorization: localStorage.getItem('token') } });
       toast.success('The category is added');
       getCatgories();
       setIsLoading(false)
@@ -89,10 +88,10 @@ export default function CategoriesList() {
   const updateCategory = async (data) => {
     try {
       setIsLoading(true)
-      let response = await axios.put(
-        `https://upskilling-egypt.com:3006/api/v1/Category/${catId}`,
+      let response = await axiousInstance.put(
+        CATEGORY_URLS.UPDATE_CATEGORY(catId),
         data,
-        { headers: { Authorization: localStorage.getItem('token') } }
+        
       );
       toast.success('The category is updated');
       getCatgories();
@@ -107,9 +106,8 @@ export default function CategoriesList() {
   const getSpecificCategory = async (id) => {
     try {
       setIsLoading(true);
-      let response = await axios.get(
-        `https://upskilling-egypt.com:3006/api/v1/Category/${id}`,
-        { headers: { Authorization: localStorage.getItem('token') } }
+      let response = await axiousInstance.get(
+        CATEGORY_URLS.GET_SPECIFIC_GATEGORY(id)
       );
       setCatDetails(response.data);
       setIsLoading(false);
@@ -121,22 +119,23 @@ export default function CategoriesList() {
 
   const getCatgories = async () => {
     try {
-      let response = await axios.get(
-        'https://upskilling-egypt.com:3006/api/v1/Category/?pageSize=10&pageNumber=1',
-        { headers: { Authorization: localStorage.getItem('token') } }
+      setLoad(true)
+      let response = await axiousInstance.get(
+        CATEGORY_URLS.GET_ALL_GATEGORIES
       );
       setCategories(response?.data?.data);
+      setLoad(false)
     } catch (error) {
       console.log(error);
+      setLoad(false)
     }
   };
 
   const deletCategory = async () => {
     try {
       setIsLoading(true)
-      let response = await axios.delete(
-        `https://upskilling-egypt.com:3006/api/v1/Category/${catId}`,
-        { headers: { Authorization: localStorage.getItem('token') } }
+      let response = await axiousInstance.delete(
+        CATEGORY_URLS.DELETE_CATEGORY(catId)
       );
       toast.success('The category is deleted');
       setIsLoading(false)
@@ -170,12 +169,12 @@ export default function CategoriesList() {
               <th>Actions</th>
             </tr>
           </thead>
-          {Categories.length > 0 ? (
+          {Load?(<Loader/>):(Categories.length > 0 ? (
             <tbody>
               {Categories.map((category) => (
                 <tr key={category.id}>
                   <td>{category.name}</td>
-                  <td>{category.creationDate}</td>
+                  <td>{category.creationDate && new Date(category.creationDate).toLocaleString()}</td>
                   <td>
                         <div className="dropdown">
                           <button
@@ -223,7 +222,8 @@ export default function CategoriesList() {
             </tbody>
           ) : (
             <NoData />
-          )}
+          ))}
+          
         </table>
       </div>
 
@@ -288,8 +288,8 @@ export default function CategoriesList() {
           <Modal.Body>
             <h5><strong>Category ID:</strong> {Category?.id}</h5>
             <h5><strong>Name:</strong> {Category?.name}</h5>
-            <h5><strong>Created At:</strong> {Category?.creationDate}</h5>
-            <h5><strong>Modified At:</strong> {Category?.modificationDate}</h5>
+            <h5><strong>Created At:</strong> {Category?.creationDate && new Date(Category?.creationDate).toLocaleString()}</h5>
+            <h5><strong>Modified At:</strong> {Category?.modificationDate && new Date(Category?.modificationDate).toLocaleString()}</h5>
           </Modal.Body>
         )}
         <Modal.Footer>
@@ -389,257 +389,3 @@ export default function CategoriesList() {
 
 
 
-
-
-
-// import React, { useEffect, useState } from 'react'
-// import Header from '../../../Shared/components/Header/Header'
-// import axios from 'axios'
-// import NoData from '../../../Shared/components/NoData/NoData'
-// import Button from 'react-bootstrap/Button';
-// import Modal from 'react-bootstrap/Modal';
-// import DeleteConfirmation from '../../../Shared/components/DeleteConfirmation/DeleteConfirmation';
-// import { toast } from 'react-toastify';
-// import { set, useForm } from 'react-hook-form';
-
-
-
-// export default function CategoriesList() {
-
-//   let {register,formState:{errors},handleSubmit,setValue} = useForm()
-//   const [statusAdd,setStatusAdd]=useState(false)
-//   const [statusUpdate,setStatusupdate]=useState(false)
-//   const [catId,setCatId] = useState(0)
-//   const [isLoading,setIsLoading] = useState(false)
-//   const [show, setShow] = useState(false);
-//   const handleClose = () => {setShow(false);}
-//   const handleShow = (id) => {
-//     setCatId(id)
-//     setShow(true);
-//   }
-
-//   const [showAdd, setShowAdd] = useState(false);
-//   const handleCloseAdd = () => {setShowAdd(false);}
-//   const handleShowAdd = () => {
-//     if(statusUpdate==true){
-//         setShowAdd(true);
-//     }
-//     else{
-//       setShowAdd(true);
-//     }
-    
-    
-//   }
-
-//   const changeStatusForUpdate = (catId)=>{
-//     setStatusupdate(true)
-//     setStatusAdd(false)
-//     setCatId(catId)
-//     const selectedCategory = Categories.find((cat) => cat.Id === catId);
-//     if (selectedCategory) {
-//       setValue('name', selectedCategory.name);
-//     }
-//     console.log(catId);
-//     handleShowAdd()
-//   }
-//   const changeStatusForAdd = ()=>{
-//     setStatusAdd(true)
-//     setStatusupdate(false)
-//     setValue('name', '');
-//     handleShowAdd()
-//   }
-
-//   const [ShowDetails, setShowDetails] = useState(false);
-//   const handleCloseDetails = () => {setShowDetails(false);}
-//   const handleShowDetails = (id) => {
-//     setShowDetails(true);
-//     getSpecificCategory(id)
-//   }
-
-//   let[Category,setCatDetails] = useState(null)
-
-
-//   let [Categories,setCategories] = useState([])
-
-//   const addCategory = async(categoryName)=>{
-//     try{
-//       let respone = await axios.post('https://upskilling-egypt.com:3006/api/v1/Category/',categoryName,{headers:{Authorization:localStorage.getItem('token')}})
-//       console.log(respone);
-//       toast.success('the Gategory is added')
-//       getCatgories()
-//       handleCloseAdd()
-//     }
-//     catch(error){
-//       console.log(error);
-      
-//     }
-//   }
-
-//   const getSpecificCategory = async(id)=>{
-//     try{
-//       setIsLoading(true)
-//       let response = await axios.get(`https://upskilling-egypt.com:3006/api/v1/Category/${id}`,{headers:{Authorization:localStorage.getItem('token')}})
-//       console.log(response);
-//       setCatDetails(response.data)
-//       setIsLoading(false)
-//     }
-//     catch(error){
-//       console.log(error);
-//       setIsLoading(false)
-//     }
-//   }
-
-
-//   const getCatgories = async()=>{
-//     try{
-//        let response = await axios.get('https://upskilling-egypt.com:3006/api/v1/Category/?pageSize=10&pageNumber=1',{headers:{Authorization:localStorage.getItem('token')}})
-//        setCategories(response?.data?.data) 
-//        console.log(response?.data?.data);
-       
-//     }
-//     catch(error){
-//           console.log(error);
-//     }
-//   }
-
-//   const updateCategory=async (categoryName)=>{
-//     try{
-//       let response = await axios.put(`https://upskilling-egypt.com:3006/api/v1/Category/${catId}`,categoryName,{headers:{Authorization:localStorage.getItem('token')}})
-//       console.log(response);
-//       toast.success('The Gategory is Updated')
-//       getCatgories()
-//     }
-//     catch(error){
-//       console.log(error);
-//       toast.error(error)
-//     }
-//   }
-
-//   const deletCategory=async ()=>{
-//     try{
-//       let response = await axios.delete(`https://upskilling-egypt.com:3006/api/v1/Category/${catId}`,{headers:{Authorization:localStorage.getItem('token')}})
-//       console.log(response);
-//       toast.success('The Gategory is deleted')
-//       handleClose()
-//       getCatgories()
-//     }
-//     catch(error){
-//       console.log(error);
-//     }
-//   }
-  
-
-//   useEffect(()=>{getCatgories()},[])
-
-//   return (
-//     <>
-//       <Header title={'Categories Item'} description={'You can now add your items that any user can order it from the Application and you can edit'}/>
-//       <div className='title p-3 d-flex justify-content-between'>
-//         <h3>Categories Table Destails</h3>
-//         <button onClick={changeStatusForAdd} className='btn btn-success'>Add New Category</button>
-//       </div>
-//       <div className='p-4'>
-//         <table className='table table-striped'>
-//         <thead>
-//           <th>Name</th>
-//           <th>Creation Date</th>
-//           <th>Actions</th>
-//         </thead>
-//         {Categories.length>0?<tbody>
-//        {Categories?.map((category) => (
-//                <tr key={category.id}>
-//                  <td>{category.name}</td>
-//                  <td>{category.creationDate}</td>
-//                   <td>
-//                     <i className="fa fa-eye" onClick={()=>{handleShowDetails(category.id)}} aria-hidden="true"></i>
-//                     <i className="fa fa-edit text-warning mx-2" onClick={()=>{changeStatusForUpdate(category.id)}} aria-hidden="true"></i>
-//                     <i onClick={()=>{handleShow(category.id)}} className="fa text-danger fa-trash pointer-event" aria-hidden="true"></i>
-//                   </td>
-//                 </tr>
-//          ))}
-//         </tbody>
-// :<NoData/>}
-        
-//       </table>
-//       </div>
-//         {/* <Button variant="primary" onClick={handleShow}>
-//         Launch demo modal
-//       </Button> */}
-
-//       <Modal show={show} onHide={handleClose}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Modal heading</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body><DeleteConfirmation deletedItem={'Category'}/></Modal.Body>
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleClose}>
-//             Close
-//           </Button>
-//           <Button variant="danger" onClick={()=>{deletCategory()}}>
-//             Delete
-//           </Button>
-//         </Modal.Footer>
-//       </Modal>
-
-//       <Modal show={showAdd} onHide={handleCloseAdd}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>{statusAdd?'Add Category':'Update Category'}</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>
-//           <form onSubmit={handleSubmit(statusAdd ? addCategory : updateCategory)}>
-//                 <div className="input-group mb-3" id="basic-addon1">
-//                   <span className="input-group-text">
-//                     <i className="fa fa-envelope" aria-hidden="true"></i>
-//                   </span>
-//                   <input
-//                     {...register('name',{required:'Category is reqiured'})}
-//                     type="text"
-//                     className="form-control"
-//                     placeholder="Category Name"
-//                     aria-label="Category Name"
-//                     aria-describedby="basic-addon1"
-//                   />
-//                 </div>
-//                 {errors.name && <span className='text-danger d-block mb-2'>{errors.name.message}</span>}
-//                 <button className='btn btn-primary'>Save</button>
-//             </form>
-//         </Modal.Body>
-//         <Modal.Footer>
-//         </Modal.Footer>
-//       </Modal>
-
-//       <Modal show={ShowDetails} onHide={handleCloseDetails}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Modal heading</Modal.Title>
-//         </Modal.Header>
-//         {isLoading ? (
-//                     <>
-//                       <div className='d-flex justify-content-center align-items-center gap-2'>
-//                            <span className="spinner-border spinner-border-sm  d-flex justify-content-center" role="status" aria-hidden="true"></span>
-//                       Loading...
-//                       </div>
-                     
-//                     </>
-//                   ) : (
-//                     <Modal.Body>
-          
-//                     <h2>Category Id: </h2><h4>{Category?.id}</h4>
-//                     <h2>Category Name: </h2><h4>{Category?.name}</h4>
-//                     <h2>Category Creation Date: </h2><h4>{Category?.creationDate}</h4>
-//                     <h2>Category Modification Date: </h2><h4>{Category?.modificationDate}</h4>
-//                     {/* <h2>{Category?.name}</h2>
-//                     <h2>{Category?.creationDate}</h2>
-//                     <h2>{Category?.modificationDate}</h2> */}
-            
-//         </Modal.Body>
-//                   )}
-       
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleCloseDetails}>
-//             Close
-//           </Button>
-//         </Modal.Footer>
-//       </Modal>
-//     </>
-//   )
-// }

@@ -6,6 +6,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import Bg from '../../../../assets/images/ella-olsson-C1Q3qOTlegg-unsplash 1.png'
+import { axiousInstance, USERS_URLS } from '../../../../services/Urls'
 
 
 export default function ForgetPass() {
@@ -16,7 +17,7 @@ export default function ForgetPass() {
     setIsLoading(true)
     console.log(data);
     try{
-      const response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Reset/Request',data)
+      const response = await axiousInstance.post(USERS_URLS.FORGET_PASS,data)
       console.log(response.data);
       toast.success(response.data.message)
       navigate('/reset-pass')

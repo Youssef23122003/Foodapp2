@@ -5,7 +5,7 @@ import userimg from '../../../../assets/images/Ellipse 235.png'
 export default function Navbar({userName}) {
   return (
    <>
-   <nav className="navbar navbar-expand-lg navbar-dark bg-body-tertiary">
+   <nav className="navbar navbar-expand-lg navbar-light bg-body-tertiary">
       <div className="container-fluid gap-2 d-felx align-items-center">
         <div class="input-group">
              <span class="input-group-text" id="basic-addon1"><i class="fa fa-search" aria-hidden="true"></i></span>

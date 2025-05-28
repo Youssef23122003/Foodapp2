@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ForgetPass from './modules/Authentication/components/Forget-pass/ForgetPass'
 import Register from './modules/Authentication/components/Register/Register'
@@ -24,6 +24,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import UsersList from './modules/Users/components/UsersList/UsersList';
 import { jwtDecode } from 'jwt-decode';
 import ProtectedRoute from './modules/Shared/components/ProtectedRoute/ProtectedRoute';
+import { axiousInstance, USERS_URLS } from './services/Urls';
 
 
 
@@ -40,6 +41,7 @@ function App() {
     setLoginData(decodedToken)
     setUserName(decodedToken.userName)
   }
+
 
   const routes=createBrowserRouter([{
     path:'',
@@ -59,7 +61,7 @@ function App() {
     element: <ProtectedRoute loginData={loginData}><MasterLayout userName={userName}/></ProtectedRoute>,
     errorElement:<Notfound/>,
     children:[
-      {index : true , element:<Dashboard/>},
+      {index : true , element:<Dashboard  userName={userName}/>},
       {path: 'recipes' , element:<RecipesList/>},
       {path: 'recipe-data' , element:<RecipeData/>},
       {path: 'favlist' , element:<FavList/>},
