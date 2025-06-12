@@ -2,7 +2,7 @@ import axios from "axios"
 const baseURL = 'https://upskilling-egypt.com:3006/api/v1'
 export const baseImgURL = 'https://upskilling-egypt.com:3006/'
 export const axiousInstance = axios.create({
-    baseURL, // تأكد أن baseURL معرف هنا أو قبله
+    baseURL, 
 });
 
 axiousInstance.interceptors.request.use(

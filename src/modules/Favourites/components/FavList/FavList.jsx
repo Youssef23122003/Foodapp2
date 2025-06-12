@@ -70,22 +70,32 @@ const getAllFavs = async ()=>{
     {Favs.length > 0 ? (
       <div className="row">
         {Favs.map((fav) => (
-          <div className="col-md-3" key={fav?.id || fav?.recipe?.id}>
-            <div className="position-relative">
-              <i onClick={()=>{handleShow(fav?.id)}} className="fa fa-heart text-danger position-absolute end-0 mt-2 fs-2" aria-hidden="true"></i>
-              <img
-                className="w-100"
-                src={`${baseImgURL}${fav?.recipe?.imagePath}`}
-                alt={fav?.recipe?.name || "Recipe Image"}
-              />
-              <h5>
-                Recipe Name: <span>{fav?.recipe?.name}</span>
-              </h5>
-              <p>
-                Description: <span>{fav?.recipe?.description}</span>
-              </p>
-            </div>
-          </div>
+          <div className="col-md-3 col-sm-6 mb-4" key={fav?.id || fav?.recipe?.id}>
+  <div className="card h-100 shadow position-relative border-0">
+    <button
+      onClick={() => handleShow(fav?.id)}
+      className="btn position-absolute top-0 end-0 m-2 p-0 text-danger"
+      style={{ background: 'transparent', border: 'none' }}
+    >
+      <i className="fa fa-heart fs-3"></i>
+    </button>
+    
+    <img
+      src={`${baseImgURL}${fav?.recipe?.imagePath}`}
+      alt={fav?.recipe?.name || "Recipe Image"}
+      className="card-img-top"
+      style={{ objectFit: 'cover', height: '200px' }}
+    />
+
+    <div className="card-body">
+      <h5 className="card-title mb-2">{fav?.recipe?.name || "No Name"}</h5>
+      <p className="card-text text-muted" style={{ fontSize: "0.9rem" }}>
+        {fav?.recipe?.description || "No Description"}
+      </p>
+    </div>
+  </div>
+</div>
+
         ))}
       </div>
     ) : (

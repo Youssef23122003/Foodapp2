@@ -7,6 +7,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContext } from '../../../../context/AuthContext'
+import { axiousInstance, USERS_URLS } from '../../../../services/Urls'
 
 
 export default function Login() {
@@ -19,7 +20,7 @@ export default function Login() {
     setIsLoading(true)
     console.log(data);
     try{
-      const response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Login',data)
+      const response = await axiousInstance.post(USERS_URLS.LOGIN,data)
       console.log(response);
       console.log(response.data);
       localStorage.setItem('token',response?.data?.token)
