@@ -69,12 +69,16 @@ export default function Register() {
                     <span className="input-group-text"><i className="fa fa-key"></i></span>
                     <input
                       {...register('password', {
-                        required: 'Password is required',
-                        minLength: {
-                          value: 6,
-                          message: 'Password must be at least 6 characters'
-                        }
-                      })}
+                            required: 'Password is required',
+                            minLength: {
+                              value: 8,
+                              message: 'Password must be at least 8 characters'
+                            },
+                            pattern: {
+                              value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+                              message: 'Password must contain at least 1 uppercase letter, 1 number, and 1 special character'
+                            }
+                        })}
                       type={showPassword ? 'text' : 'password'}
                       className="form-control"
                       placeholder="Password"
