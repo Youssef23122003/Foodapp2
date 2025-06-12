@@ -1,10 +1,20 @@
 import axios from "axios"
-
 const baseURL = 'https://upskilling-egypt.com:3006/api/v1'
 export const baseImgURL = 'https://upskilling-egypt.com:3006/'
+export const axiousInstance = axios.create({
+    baseURL, // تأكد أن baseURL معرف هنا أو قبله
+});
 
-export const axiousInstance = axios.create({baseURL,headers:{ Authorization: localStorage.getItem('token') }})
-
+axiousInstance.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 export const USERS_URLS = {
     LOGIN:'/Users/Login',

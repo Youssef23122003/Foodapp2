@@ -12,12 +12,18 @@ export default function AuthContextProvider(props){
   const saveLogingData = () =>{
     let encodedtoken = localStorage.getItem('token')
     let decodedToken = jwtDecode(encodedtoken);
-    console.log(decodedToken);
+    // console.log(decodedToken);
     setLoginData(decodedToken)
     setUserName(decodedToken.userName)
   }
 
-   useEffect(()=>{if(localStorage.getItem('token')){saveLogingData()}},[])
+  
+
+   useEffect(()=>{if(localStorage.getItem('token')){saveLogingData()}
+  
+  console.log(`loginData : ${loginData}`);
+  
+  },[])
 
 
     return(<AuthContext.Provider value={{loginData,saveLogingData,userName}}>{props.children}</AuthContext.Provider>)
