@@ -4,7 +4,7 @@ import Bg from '../../../../assets/images/ella-olsson-C1Q3qOTlegg-unsplash 1.png
 import { useForm } from 'react-hook-form'
 import { axiousInstance, USERS_URLS } from '../../../../services/Urls'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function Register() {
   let {register,formState:{errors},handleSubmit,watch} = useForm()
@@ -136,17 +136,11 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Dropzone */}
-              <div className="register-img mb-3">
-                <div className="dropzone text-center p-4 border border-secondary rounded bg-light">
-                  <input type="file" className="form-control" />
-                  <p className="mb-0 small text-muted">Drag & Drop or Choose an Item Image to Upload</p>
-                </div>
-              </div>
+              
 
               {/* Login link */}
               <div className="d-flex justify-content-end mb-3">
-                <a href="/login" className="text-decoration-none">Already have an account? Login</a>
+                <Link to={'/login'} className="text-decoration-none">Already have an account? Login</Link>
               </div>
 
               {/* Submit button */}

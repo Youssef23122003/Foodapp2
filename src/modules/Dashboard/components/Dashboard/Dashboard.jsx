@@ -5,12 +5,13 @@ import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../../../context/AuthContext'
 
 export default function Dashboard() {
-  let {userName} = useContext(AuthContext)
+  let {userName,loginData} = useContext(AuthContext)
   let navigate = useNavigate()
+   
   return (
     <>
       <Header title={`welcome ${userName} !` } description={'This is a welcoming screen for the entry of the application , you can now see the options'} img={header}/>
-      <div className="recipe-header p-4">
+      {loginData?.userGroup !== 'SystemUser' ?  <div className="recipe-header p-4">
       <div className="row">
         <div className="col-md-8 d-flex align-items-center">
           <div>
@@ -24,7 +25,8 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
-    </div>
+    </div>:''}
+    
     </>
   )
 }
