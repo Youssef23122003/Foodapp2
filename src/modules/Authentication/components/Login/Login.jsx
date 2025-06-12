@@ -74,12 +74,16 @@ export default function Login() {
                     <i className="fa fa-lock" aria-hidden="true"></i>
                   </span>
                   <input
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 6,
-                        message: 'Password must be at least 6 characters'
-                      }
+                     {...register('password', {
+                            required: 'Password is required',
+                            minLength: {
+                              value: 8,
+                              message: 'Password must be at least 8 characters'
+                            },
+                            pattern: {
+                              value: /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/,
+                              message: 'Password must contain at least 1 uppercase letter, 1 number, and 1 special character'
+                            }
                     })}
                     type={showPassword ? "text" : "password"}
                     className="form-control"
