@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { axiousInstance, baseImgURL, CATEGORY_URLS, RECIPES_URL, TAGS_URL } from '../../../../services/Urls'
 import { toast } from 'react-toastify'
 import { useState } from 'react'
-import { use } from 'react'
 
 
 export default function RecipeData() {
@@ -67,6 +66,8 @@ export default function RecipeData() {
         
     }
   }
+
+
   const getAllTags = async ()=>{
     try{
       let response = await axiousInstance.get(TAGS_URL.GET_ALL_TAGS)
@@ -94,7 +95,7 @@ export default function RecipeData() {
 
   useEffect(()=>{getAllTags()},[])
   useEffect(()=>{getCatgories()},[])
- useEffect(() => {
+  useEffect(() => {
   if (
     recipe &&
     tags.length > 0 &&
@@ -110,6 +111,7 @@ export default function RecipeData() {
     setStatusUpdate(true);
   }
 }, [recipe, tags, Categories, setValue]);
+
   return (
     <>
      <div className="container recipe-header p-4">
@@ -121,7 +123,7 @@ export default function RecipeData() {
           </div>
         </div>
         <div className="col-md-4 d-flex justify-content-end align-items-center">
-          <button className="btn btn-success">
+          <button onClick={()=>{navigate('/dashboard/recipes')}} className="btn btn-success">
             All Recipes <i className="fa fa-arrow-right" aria-hidden="true"></i>
           </button>
         </div>

@@ -18,7 +18,7 @@ export default function VerifiyAccount() {
     try{
       console.log(account);
       setIsLoading(true)
-      let response = await axiousInstance.post(USERS_URLS.VERIFIY_ACC,account)
+      let response = await axiousInstance.put(USERS_URLS.VERIFIY_ACC,account)
       console.log(response);
       toast.success('Account is Verfied Successfully')
       navigate('/')

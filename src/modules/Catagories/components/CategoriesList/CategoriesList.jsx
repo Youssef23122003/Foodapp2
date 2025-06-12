@@ -19,12 +19,15 @@ export default function CategoriesList() {
     setValue,
   } = useForm();
   const [Load, setLoad] = useState(false);
+  const [totalNumOfPages,setTotalNumOfPages] = useState([])
+  const [currentPage, setCurrentPage] = useState(1);
   const [statusAdd, setStatusAdd] = useState(false);
   const [statusUpdate, setStatusUpdate] = useState(false);
   const [catId, setCatId] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [nameValue,setNameValue] = useState('');
   const [ShowDetails, setShowDetails] = useState(false);
 
   const [Category, setCatDetails] = useState(null);
@@ -51,7 +54,6 @@ export default function CategoriesList() {
     if (selectedCategory) {
       setValue('name', selectedCategory.name); 
     }
-
     handleShowAdd();
   };
 
@@ -117,12 +119,15 @@ export default function CategoriesList() {
     }
   };
 
-  const getCatgories = async () => {
+  const getCatgories = async (pageSize,pageNumber,name) => {
     try {
       setLoad(true)
       let response = await axiousInstance.get(
-        CATEGORY_URLS.GET_ALL_GATEGORIES
+        CATEGORY_URLS.GET_ALL_GATEGORIES,{params:{pageSize,pageNumber,name}}
       );
+      setCurrentPage(pageNumber)
+      console.log(response);
+      setTotalNumOfPages(Array(response?.data?.totalNumberOfPages).fill().map((_,i)=>i+1))
       setCategories(response?.data?.data);
       setLoad(false)
     } catch (error) {
@@ -147,8 +152,13 @@ export default function CategoriesList() {
     }
   };
 
+  const changeValue = (input)=>{
+    setNameValue(input.target.value)
+    getCatgories(3,1,input.target.value)
+  }
+
   useEffect(() => {
-    getCatgories();
+    getCatgories(3,1,"");
   }, []);
 
   return (
@@ -161,70 +171,148 @@ export default function CategoriesList() {
       </div>
 
       <div className='p-4'>
-        <table className='table table-striped'>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Creation Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          {Load?(<Loader/>):(Categories.length > 0 ? (
-            <tbody>
-              {Categories.map((category) => (
-                <tr key={category.id}>
-                  <td>{category.name}</td>
-                  <td>{category.creationDate && new Date(category.creationDate).toLocaleString()}</td>
-                  <td>
-                        <div className="dropdown">
-                          <button
-                            className="btn btn-sm btn-light"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                          >
-                            <i className="fa fa-ellipsis-h"></i>
-                          </button>
-                          <ul className="dropdown-menu">
-                            <li>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => handleShowDetails(category.id)}
-                              >
-                                <i className="fa fa-eye me-2 text-primary"></i>
-                                View
-                              </button>
-                            </li>
-                            <li>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => changeStatusForUpdate(category.id)}
-                              >
-                                <i className="fa fa-edit me-2 text-warning"></i>
-                                Edit
-                              </button>
-                            </li>
-                            <li>
-                              <button
-                                className="dropdown-item"
-                                onClick={() => handleShow(category.id)}
-                              >
-                                <i className="fa fa-trash me-2 text-danger"></i>
-                                Delete
-                              </button>
-                            </li>
-                          </ul>
-                        </div>
-                    </td>
+        <input type="text" placeholder='Search By Name' onChange={changeValue} className='form-control' />
+     
+<div className="table-responsive mt-4 d-none d-md-block">
+  {Load ? (
+    <div
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "300px" }}
+    >
+      <Loader />
+    </div>
+  ) : (
+    <table className="table table-striped table-bordered align-middle text-center">
+      <thead className="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Creation Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
 
-                </tr>
-              ))}
-            </tbody>
-          ) : (
-            <NoData />
-          ))}
-          
-        </table>
+      <tbody>
+        {Categories.length > 0 ? (
+          Categories.map((category) => (
+            <tr key={category.id}>
+              <td>{category.name}</td>
+              <td>{category.creationDate && new Date(category.creationDate).toLocaleString()}</td>
+              <td>
+                <div className="dropdown">
+                  <button
+                    className="btn btn-sm btn-light"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i className="fa fa-ellipsis-h"></i>
+                  </button>
+                  <ul className="dropdown-menu">
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => handleShowDetails(category.id)}
+                      >
+                        <i className="fa fa-eye me-2 text-primary"></i> View
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => changeStatusForUpdate(category.id)}
+                      >
+                        <i className="fa fa-edit me-2 text-warning"></i> Edit
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => handleShow(category.id)}
+                      >
+                        <i className="fa fa-trash me-2 text-danger"></i> Delete
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="3" className="py-4 text-center"><NoData /></td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  )}
+</div>
+
+
+
+<div className="d-block d-md-none">
+  {Load ? (
+    <Loader />
+  ) : Categories.length > 0 ? (
+    Categories.map((category) => (
+      <div key={category.id} className="border rounded p-2 mb-3 shadow-sm">
+        <h5 className="mb-1">{category.name}</h5>
+        <p className="small text-muted mb-2">
+          {category.creationDate && new Date(category.creationDate).toLocaleString()}
+        </p>
+        <div className="d-flex gap-2">
+          <button onClick={() => handleShowDetails(category.id)} className="btn btn-sm btn-outline-primary w-100">View</button>
+          <button onClick={() => changeStatusForUpdate(category.id)} className="btn btn-sm btn-outline-warning w-100">Edit</button>
+          <button onClick={() => handleShow(category.id)} className="btn btn-sm btn-outline-danger w-100">Delete</button>
+        </div>
+      </div>
+    ))
+  ) : (
+    <NoData />
+  )}
+</div>
+
+{Categories.length>0?(<nav aria-label="Page navigation example" className="mt-4">
+  <ul className="pagination justify-content-center">
+    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+      <button
+        className="page-link"
+        aria-label="Previous"
+        onClick={() => currentPage > 1 && getCatgories(3, currentPage - 1)}
+      >
+        <span aria-hidden="true">&laquo;</span>
+      </button>
+    </li>
+
+    {totalNumOfPages.map((page) => (
+      <li
+        key={page}
+        className={`page-item ${currentPage === page ? 'active' : ''}`}
+      >
+        <button
+          onClick={() => getCatgories(3, page)}
+          className="page-link"
+        >
+          {page}
+        </button>
+      </li>
+    ))}
+
+    <li className={`page-item ${currentPage === totalNumOfPages.length ? 'disabled' : ''}`}>
+      <button
+        className="page-link"
+        aria-label="Next"
+        onClick={() =>
+          currentPage < totalNumOfPages.length && getCatgories(3, currentPage + 1)
+        }
+      >
+        <span aria-hidden="true">&raquo;</span>
+      </button>
+    </li>
+  </ul>
+</nav>):''}
+
+
+
       </div>
 
       
@@ -233,7 +321,7 @@ export default function CategoriesList() {
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <DeleteConfirmation deletedItem={'Category'} />
+          <DeleteConfirmation  title={'Delete this Category'}  description={'are you sure you want to delete this Category ? if you are sure just click on delete it'}/>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>Close</Button>

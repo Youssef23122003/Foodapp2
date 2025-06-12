@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import logo from '../../../../assets/images/4 3.png'
 import Bg from '../../../../assets/images/ella-olsson-C1Q3qOTlegg-unsplash 1.png'
 import { Link, useNavigate } from 'react-router-dom'
@@ -6,9 +6,11 @@ import { set, useForm } from 'react-hook-form'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthContext } from '../../../../context/AuthContext'
 
 
-export default function Login({saveLogingData}) {
+export default function Login() {
+  let {saveLogingData} = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate=useNavigate()
@@ -81,7 +83,7 @@ export default function Login({saveLogingData}) {
                     type={showPassword ? "text" : "password"}
                     className="form-control"
                     placeholder="Password"
-                    aria-label="Username"
+                    aria-label="password"
                     aria-describedby="basic-addon1"
                   />
                   <button 

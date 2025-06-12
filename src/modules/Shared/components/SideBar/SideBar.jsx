@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar'
 import sidebarimg from '../../../../assets/images/3.png'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -8,20 +8,33 @@ import logo from '../../../../assets/images/4 3.png'
 import { useForm } from 'react-hook-form';
 import { axiousInstance, USERS_URLS } from '../../../../services/Urls';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../../../context/AuthContext';
+import DeleteConfirmation from '../DeleteConfirmation/DeleteConfirmation';
 
 
 export default function SideBar() {
+  let {loginData} = useContext(AuthContext)
   let {register,formState:{errors},handleSubmit,watch} = useForm()
   const [isCollapsed, setIsCollapsed] = useState(false)
   let navigate = useNavigate()
-   const newPassword = watch('newPassword')
+  const [show, setShow] = useState(false);
+  const newPassword = watch('newPassword')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [lgShow, setLgShow] = useState(false);
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
   }
+
+   const handleClose = () => setShow(false);
+
+
+  const handleShow = () => {
+    setShow(true)
+  };
+
 
   const logout = ()=>{
     localStorage.removeItem('token')
@@ -48,12 +61,13 @@ export default function SideBar() {
 
   return (
     <>
-    <div className="sidebar-container vh-100 d-flex">
+    <div className="sidebar-container min-vh-100 d-flex">
       <Sidebar
-        style={{
-          borderTopRightRadius: '70px',
-          overflow: 'hidden',
-        }}
+       style={{
+    borderTopRightRadius: '70px',
+    overflow: 'hidden',
+    height: '100vh'
+  }}
         collapsed={isCollapsed}
         className="vh-100 border-rounded-end-2 shadow"
       >
@@ -66,19 +80,20 @@ export default function SideBar() {
             />
           </MenuItem>
 
+
           <MenuItem
             icon={<i className="fa fa-home" />}
             component={<NavLink to="/dashboard" className={({ isActive }) => isActive ? 'active' : ''} end />}
           >
             Home
           </MenuItem>
-
-          <MenuItem
+          {loginData?.userGroup !== 'SystemUser' ?  <MenuItem
             icon={<i className="fa fa-users" />}
             component={<NavLink to="/dashboard/users" className={({ isActive }) => isActive ? 'active' : ''} />}
           >
             Users
-          </MenuItem>
+          </MenuItem>:''}
+         
 
           <MenuItem
             icon={<i className="fa-solid fa-utensils" />}
@@ -87,18 +102,22 @@ export default function SideBar() {
             Recipes
           </MenuItem>
 
-          <MenuItem
+            {loginData?.userGroup !== 'SystemUser'? <MenuItem
             icon={<i className="fa-solid fa-grip" />}
             component={<NavLink to="/dashboard/categories" className={({ isActive }) => isActive ? 'active' : ''} />}
-          >
-            Categories
-          </MenuItem>
+          >Catagories</MenuItem>:''}
+
+            {loginData?.userGroup == 'SystemUser'? <MenuItem
+            icon={<i class="fa-solid fa-heart"></i>}
+            component={<NavLink to="/dashboard/favs" className={({ isActive }) => isActive ? 'active' : ''} />}
+          >Favs</MenuItem>:''}
+         
 
           <MenuItem onClick={() => setLgShow(true)} icon={<i className="fa-solid fa-key" />}>
             Change Password
           </MenuItem>
 
-          <MenuItem onClick={logout} icon={<i className="fa-solid fa-right-from-bracket" />}>
+          <MenuItem onClick={handleShow} icon={<i className="fa-solid fa-right-from-bracket" />}>
             Logout
           </MenuItem>
         </Menu>
@@ -211,6 +230,26 @@ export default function SideBar() {
                     </button>
                  </form>
         </Modal.Body>
+      </Modal>
+
+
+
+
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title></Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <DeleteConfirmation  title={'Logout'}  description={'are you sure you want to logout?'}/>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>Close</Button>
+          <Button variant="outline-danger" onClick={logout} >
+           
+             Logout
+          </Button>
+        </Modal.Footer>
       </Modal>
  </>
    

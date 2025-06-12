@@ -8,10 +8,16 @@ export const axiousInstance = axios.create({baseURL,headers:{ Authorization: loc
 
 export const USERS_URLS = {
     LOGIN:'/Users/Login',
+    REGISTER:'/Users/Register',
     RESET_PASS:'/Users/Reset',
     FORGET_PASS:'/Users/Reset/Request',
     VERIFIY_ACC:'/Users/verify',
-    CHANGE_PASS:'/Users/ChangePassword'
+    CHANGE_PASS:'/Users/ChangePassword',
+    CURRENT_USER:'/Users/currentUser',
+    GET_ALL_USERS:'/Users/',
+    UPDATE_PROFILE:'/Users/',
+    GET_SPECIFIC_USER:(id)=>`/Users/${id}`,
+    DELETE_SPECIFIC_USER:(id)=>`/Users/${id}`
 }
 
 export const CATEGORY_URLS = {
@@ -31,4 +37,10 @@ export const RECIPES_URL = {
 
 export const TAGS_URL = {
     GET_ALL_TAGS : '/tag/'
+}
+
+export const FAVS_URL = {
+    GET_ALL_FAVS:'/userRecipe/',
+    ADD_TO_FAVS:'/userRecipe/',
+    DELETE_FROM_FAVS:(id)=>`/userRecipe/${id}`
 }

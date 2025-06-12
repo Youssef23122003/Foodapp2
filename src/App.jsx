@@ -25,31 +25,16 @@ import UsersList from './modules/Users/components/UsersList/UsersList';
 import { jwtDecode } from 'jwt-decode';
 import ProtectedRoute from './modules/Shared/components/ProtectedRoute/ProtectedRoute';
 import { axiousInstance, USERS_URLS } from './services/Urls';
-
-
-
+import Profile from './modules/Shared/components/Profile/Profile';
 
 function App() {
-
-  let[loginData,setLoginData]=useState(null)
-  let[userName,setUserName]=useState(null)
-
-  const saveLogingData = () =>{
-    let encodedtoken = localStorage.getItem('token')
-    let decodedToken = jwtDecode(encodedtoken);
-    console.log(decodedToken);
-    setLoginData(decodedToken)
-    setUserName(decodedToken.userName)
-  }
-
-
   const routes=createBrowserRouter([{
     path:'',
     element:<AuthLayout/>,
     errorElement:<Notfound/>,
     children:[
-      {index:true, element:<Login saveLogingData={saveLogingData}/>},
-      {path:'login', element:<Login saveLogingData={saveLogingData}/>},
+      {index:true, element:<Login/>},
+      {path:'login', element:<Login/>},
       {path:'register', element:<Register/>},
       {path:'reset-pass', element:<ResetPass/>},
       {path:'verifiy-account', element:<VerifiyAccount/>},
@@ -58,21 +43,22 @@ function App() {
   },
   {
     path:'/dashboard',
-    element: <ProtectedRoute loginData={loginData}><MasterLayout userName={userName}/></ProtectedRoute>,
+    element: <ProtectedRoute><MasterLayout/></ProtectedRoute>,
     errorElement:<Notfound/>,
     children:[
-      {index : true , element:<Dashboard  userName={userName}/>},
+      {index : true , element:<Dashboard/>},
       {path: 'recipes' , element:<RecipesList/>},
       {path: 'recipe-data' , element:<RecipeData/>},
       {path: 'favlist' , element:<FavList/>},
       {path: 'categories' , element:<CategoriesList/>},
       {path: 'category-data' , element:<CategoryData/>},
+      {path: 'profile' , element:<Profile/>},
       {path: 'users' , element:<UsersList/>},
       {path: 'favs' , element:<FavList/>}
     ]
   }])
 
-  useEffect(()=>{if(localStorage.getItem('token')){saveLogingData()}},[])
+ 
 
   return (
     <>

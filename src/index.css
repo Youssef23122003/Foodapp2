@@ -51,8 +51,22 @@
 
 .active {
   border-left: 5px solid rgb(14, 172, 14) !important;
-  background-color: rgb(41, 50, 81) !important;
+  /* background-color: rgb(41, 50, 81) !important; */
   color: white !important;
+}
+
+.active>.page-link, .page-link.active {
+  background-color: #009247 !important;
+}
+
+.Logooo{
+  background-color: transparent !important;
+   border-left:unset!important;
+   color: #333 !important;
+   text-decoration: none;
+   display: flex;
+   align-items: center;
+   gap: 5px;
 }
 
 .recipe-header{
@@ -100,7 +114,7 @@
 .even-row {
   background-color: #ffffff;
 }
-
+/* 
 @media (max-width: 768px) {
   .table thead {
     display: none;
@@ -132,7 +146,7 @@
   .table tbody td:last-child {
     border-bottom: none;
   }
-}
+} */
 
 .loader-overlay {
   position: fixed;
@@ -171,3 +185,6 @@
 }
 
 
+.page-link{
+  cursor: pointer;
+}

@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Header from '../../../Shared/components/Header/Header'
 import header from '../../../../assets/images/dashimg-header.png'
 import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../../../../context/AuthContext'
 
-export default function Dashboard({userName}) {
+export default function Dashboard() {
+  let {userName} = useContext(AuthContext)
   let navigate = useNavigate()
   return (
     <>
